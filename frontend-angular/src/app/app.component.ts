@@ -37,7 +37,7 @@ export class AppComponent {
         this.status = 'success';
         this.form.reset();
       },
-      error: (err) => {
+      error: (err: any) => {
         this.status = 'error';
         this.errorMessage =
           err?.error?.detail ?? 'Não foi possível salvar o registro. Tente novamente.';

@@ -34,6 +34,13 @@ Observações:
 - Com a variável `DATABASE_URL` apontando para SQLite o backend criará um arquivo `test.db` em `backend/` e você terá a API em `http://localhost:8000` e a documentação em `http://localhost:8000/docs`.
 - Para testar os frontends localmente sem Docker, entre nas pastas `frontend-angular` e `frontend-react`, execute `npm install` e depois `npm start` (Angular) ou `npm run dev` (React). Ajuste a variável `API_URL` nos arquivos `frontend-angular/src/app/core/record.service.ts` e `frontend-react/src/api/records.js` para `http://localhost:8000` se necessário.
 
+Nota sobre Docker
+-----------------
+
+Durante o desenvolvimento eu preparei `Dockerfile`s e um `docker-compose.yml` para orquestrar os serviços. Porém, não foi possível iniciar os containers no meu ambiente por falta de privilégios de administrador para instalar/ativar o Docker Desktop. Por isso a verificação final do 'docker compose up --build' não foi executada aqui.
+
+O projeto foi ajustado para rodar sem Docker (modo local): use a instrução acima para executar o backend via Uvicorn com SQLite ou a configuração `DATABASE_URL` apontando para um PostgreSQL em execução. Quando o Docker Desktop estiver disponível na sua máquina, o `docker compose up --build` deve subir `db`, `backend`, `frontend-angular` e `frontend-react` conforme o `docker-compose.yml`.
+
 ## Portas
 
 | Serviço              | URL                              |
@@ -54,3 +61,73 @@ Observações:
 ## Limitações conhecidas / itens não concluídos
 
 > Preencha esta seção ao final da prova com o que realmente ficou pendente dentro das 4 horas (ex.: sem testes automatizados, sem paginação, sem Alembic, etc.).
+
+## Estado atual (2026-09-02)
+
+- **Backend:** funcionando localmente via Uvicorn com SQLite (variável `DATABASE_URL` apontando para `sqlite:///.../backend/test.db`). Subi o servidor localmente para desenvolvimento e os testes básicos (`backend/test_api.py`) retornaram POST 201 e GET 200.
+- **Dependências do backend:** substituí `psycopg2-binary` por `psycopg[binary]==3.3.5` (psycopg v3 binário) no `backend/requirements.txt` para evitar falhas de build no Windows. Instalação concluída na venv `backend/.venv`.
+- **React (painel):** dependências instaladas e servidor Vite em execução com `VITE_API_URL` apontando para o backend local. Aplicação disponível em `http://localhost:5173/`.
+- **Angular (formulário):** dependências instaladas, porém o `ng serve` falhou ao compilar devido a erros TypeScript relacionados a declarações de tipos ESM (`TS2307` para `@angular/common` / `@angular/common/http` e `rxjs`) e erros de injeção (`NG2003`). Esses erros ocorreram mesmo após ajustes de `tsconfig.json` — provável causa: resolução/declarações ESM não encontradas ou instalação parcial de tipos. A aplicação Angular não está servindo corretamente no momento.
+
+### Como reproduzir localmente (rápido)
+
+- Backend (PowerShell):
+```powershell
+cd backend
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install --no-cache-dir -r requirements.txt
+setx DATABASE_URL "sqlite:///C:/Users/aluno/Desktop/project-root/backend/test.db"
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
+```
+
+- React (painel):
+```powershell
+cd frontend-react
+npm install --no-audit --no-fund --legacy-peer-deps
+set VITE_API_URL=http://localhost:8001
+npm run dev
+```
+
+- Angular (formulário) — tentativa e passos sugeridos:
+```powershell
+cd frontend-angular
+# limpar e reinstalar dependências
+rd /s /q node_modules
+del package-lock.json
+npm cache clean --force
+npm install --no-audit --no-fund --legacy-peer-deps
+# então iniciar
+npm start
+```
+
+Se o `ng serve` continuar com erros de declaração de tipos, verifique a versão do Node (recomendada pelo `@angular/cli`), reinstale `node_modules` e confirme que os pacotes `@angular/*` e `rxjs` foram instalados corretamente. Como alternativa temporária, documente o erro e execute apenas o backend+React para validação funcional.
+
+### Nota sobre Docker
+
+- Os `Dockerfile`s e `docker-compose.yml` estão preparados, mas não foi possível executar `docker compose up --build` neste ambiente por ausência de privilégios administrativos para instalar/ativar o Docker Desktop. Portanto, a validação final em containers não foi realizada aqui.
+
+### Próximos passos recomendados
+
+- Resolver o problema de tipos do Angular (reinstalar dependências; alinhar `tsconfig` e `moduleResolution` conforme versão do Node/CLI). Se quiser, eu continuo tentando essas correções.
+- Opcional: quando o Docker Desktop estiver disponível, testar `docker compose up --build` para validar todo o fluxo em containers.
+
+**Dependências — Usadas vs Opcionais**
+
+- **Backend (`backend/requirements.txt`)**:
+   - Usadas: `fastapi`, `uvicorn`, `sqlalchemy`, `pydantic` — necessárias para rodar a API localmente.
+   - Opcionais/condicionais: `psycopg[binary]` — necessária apenas se for conectar a um PostgreSQL em produção; o ambiente local de desenvolvimento usa SQLite por padrão (variável `DATABASE_URL`).
+
+- **Frontend Angular (`frontend-angular/package.json`)**:
+   - Usadas: `@angular/*` e `rxjs`, `zone.js`, `tslib` — dependências essenciais para o formulário e o `RecordService`.
+   - Dev: `@angular/cli`, `@angular-devkit/build-angular`, `typescript` — usadas para desenvolvimento e build local.
+
+- **Frontend React (`frontend-react/package.json`)**:
+   - Usadas: `react`, `react-dom`, `recharts` — UI e gráficos.
+   - Dev: `vite`, `@vitejs/plugin-react`, `tailwindcss`, `postcss`, `autoprefixer` — usadas no pipeline de desenvolvimento e build.
+
+- **Docker / Orquestração**:
+   - Arquivos `Dockerfile` e `docker-compose.yml` estão presentes e preparados, mas não foram executados neste ambiente por falta de privilégios administrativos para instalar/ativar Docker Desktop. Portanto, os containers não foram testados aqui.
+
+Esta lista contempla as dependências referenciadas nos manifests do projeto e se destinam a documentar o que é necessário para executar cada serviço. Pacotes adicionais que possam aparecer em instalações locais (por exemplo, sub-dependências do `node_modules`) não estão listados aqui — apenas as dependências top-level declaradas nos `package.json` e `requirements.txt`.
+
