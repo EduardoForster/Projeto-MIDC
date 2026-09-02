@@ -60,7 +60,29 @@ O projeto foi ajustado para rodar sem Docker (modo local): use a instrução aci
 
 ## Limitações conhecidas / itens não concluídos
 
-> Preencha esta seção ao final da prova com o que realmente ficou pendente dentro das 4 horas (ex.: sem testes automatizados, sem paginação, sem Alembic, etc.).
+Durante o tempo disponível (limite de prova) este foi o escopo e o que ficou pendente:
+
+- Tempo e escopo:
+   - Prazo curto (4 horas) — entregamos uma aplicação mínima funcional com backend e um dashboard, priorizando funcionalidade end‑to‑end sobre extras.
+
+- Itens implementados:
+   - Backend com FastAPI, SQLAlchemy e endpoints mínimos (`POST /records`, `GET /records`, `GET /summary`).
+   - Persistência testada localmente com SQLite (arquivo `backend/test.db`).
+   - Frontend React (painel) implementado e em execução com Vite, consumindo a API.
+   - Frontend Angular (formulário) implementado; dependências instaladas, mas ainda com problema de compilação em algumas máquinas (ver notas abaixo).
+
+- Itens não concluídos / pendentes (dentro do tempo de prova):
+   - Migrations (Alembic) não configurado — usamos `Base.metadata.create_all` para simplificar no escopo da prova.
+   - Testes automatizados além do smoke test (`backend/test_api.py`) — não houve tempo para testes unitários/integração completos.
+   - Paginação e filtros avançados para `GET /records` — implementações básicas retornam todos os registros.
+   - Autenticação/autorização — a aplicação é pública para simplificar o desafio.
+   - Validação e tratamento de erros mais abrangentes (ex.: retry, circuit-breaker) — mínimos necessários foram implementados.
+   - Execução em Docker não verificada localmente devido à falta de privilégios para ativar Docker Desktop na máquina onde o trabalho foi realizado.
+
+- Observações sobre Angular (pendência prática):
+   - Em alguns ambientes Windows a execução `ng serve` apresentou erros de compilação TypeScript relacionados a declarações ESM e resolução de tipos (`TS2307`, `NG2003`). Reinstalar `node_modules`, alinhar `tsconfig.json` e reiniciar o servidor TypeScript do editor geralmente resolve; documentamos os passos no README, mas a correção final depende do ambiente local (Node version / cache do npm / TS server).
+
+Esta lista resume o que foi possível entregar nas 4 horas e os pontos que ficaram para melhoria posterior; o repositório contém todos os artefatos produzidos até aqui.
 
 ## Estado atual (2026-09-02)
 

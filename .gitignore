@@ -3,3 +3,16 @@ dist/
 .env
 __pycache__/
 *.pyc
+
+# Python venv and DB
+backend/.venv/
+backend/test.db
+
+# Angular cache and local artifacts
+frontend-angular/.angular/
+
+# Node package locks and OS files
+**/package-lock.json
+.vscode/
+.DS_Store
+*.log
