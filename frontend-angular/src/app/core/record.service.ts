@@ -10,8 +10,11 @@ export interface RegistroPayload {
   observacao?: string;
 }
 
-// Em desenvolvimento local (fora do Docker) troque para http://localhost:8000
-const API_URL = 'http://localhost:8000';
+// Resolve API URL automaticamente:
+// - em localhost usa http://localhost:8000
+// - em Docker Compose usa http://backend:8000
+const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+const API_URL = hostname === 'localhost' || hostname === '127.0.0.1' ? 'http://localhost:8000' : 'http://backend:8000';
 
 @Injectable({ providedIn: 'root' })
 export class RecordService {
