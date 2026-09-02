@@ -1,0 +1,27 @@
+<div class="card">
+  <h1>Registrar indicador de funcionário</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label for="nome">Nome</label>
+    <input id="nome" type="text" formControlName="nome" />
+
+    <label for="departamento">Departamento</label>
+    <input id="departamento" type="text" formControlName="departamento" />
+
+    <label for="data_referencia">Data de referência</label>
+    <input id="data_referencia" type="date" formControlName="data_referencia" />
+
+    <label for="quantidade_entregas">Quantidade de entregas</label>
+    <input id="quantidade_entregas" type="number" min="0" formControlName="quantidade_entregas" />
+
+    <label for="observacao">Observação (opcional)</label>
+    <textarea id="observacao" formControlName="observacao"></textarea>
+
+    <button type="submit" [disabled]="status === 'sending'">
+      {{ status === 'sending' ? 'Enviando...' : 'Salvar registro' }}
+    </button>
+
+    <p class="msg-success" *ngIf="status === 'success'">Registro salvo com sucesso!</p>
+    <p class="msg-error" *ngIf="status === 'error'">{{ errorMessage }}</p>
+  </form>
+</div>
