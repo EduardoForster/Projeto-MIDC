@@ -63,7 +63,7 @@ O projeto foi ajustado para rodar sem Docker (modo local): use a instrução aci
 Durante o tempo disponível (limite de prova) este foi o escopo e o que ficou pendente:
 
 - Tempo e escopo:
-   - Prazo curto (4 horas) — entregamos uma aplicação mínima funcional com backend e um dashboard, priorizando funcionalidade end‑to‑end sobre extras.
+   - Prazo (4 horas) — entregamos uma aplicação mínima funcional com backend e um dashboard, priorizando funcionalidade end‑to‑end sobre extras.
 
 - Itens implementados:
    - Backend com FastAPI, SQLAlchemy e endpoints mínimos (`POST /records`, `GET /records`, `GET /summary`).
@@ -72,7 +72,7 @@ Durante o tempo disponível (limite de prova) este foi o escopo e o que ficou pe
    - Frontend Angular (formulário) implementado; dependências instaladas, mas ainda com problema de compilação em algumas máquinas (ver notas abaixo).
 
 - Itens não concluídos / pendentes (dentro do tempo de prova):
-   - Migrations (Alembic) não configurado — usamos `Base.metadata.create_all` para simplificar no escopo da prova.
+   - Migrations (Alembic) não configurado — usei `Base.metadata.create_all` para simplificar no escopo da prova.
    - Testes automatizados além do smoke test (`backend/test_api.py`) — não houve tempo para testes unitários/integração completos.
    - Paginação e filtros avançados para `GET /records` — implementações básicas retornam todos os registros.
    - Autenticação/autorização — a aplicação é pública para simplificar o desafio.
